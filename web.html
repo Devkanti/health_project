@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBook - Secure Appointment Booking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)); }
+        }
+
+        @keyframes slideRight {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .floating-graphic {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .graphic-1 {
+            top: 10%;
+            left: 5%;
+            animation: float 6s ease-in-out infinite;
+            width: 150px;
+            height: 150px;
+        }
+
+        .graphic-2 {
+            top: 60%;
+            right: 5%;
+            animation: float 8s ease-in-out infinite;
+            width: 120px;
+            height: 120px;
+        }
+
+        .graphic-3 {
+            bottom: 15%;
+            left: 10%;
+            animation: float 7s ease-in-out infinite;
+            width: 100px;
+            height: 100px;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%);
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+            width: fit-content;
+            animation: slideRight 0.8s ease;
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .section-illustration {
+            text-align: center;
+            margin: 30px 0;
+            opacity: 0.8;
+        }
+
+        .section-illustration svg {
+            max-width: 300px;
+            height: auto;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            font-size: 1.5em;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .corner-decoration {
+            position: fixed;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .corner-top-left {
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .corner-bottom-right {
+            bottom: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-indicator.active {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+
+        .status-indicator.pending {
+            background: #ffc107;
+            box-shadow: 0 0 10px #ffc107;
+        }
+
+        .checkmark {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #28a745;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .animated-border {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            animation: shimmer 3s infinite;
+        }
+    
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            display: none;
+            animation: floatIn 0.8s ease;
+        }
+
+        .header.show {
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 800;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2), 
+                        0 0 60px rgba(102, 126, 234, 0.2);
+            overflow: hidden;
+            display: none;
+            animation: floatIn 0.8s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .panel-header h2 {
+            font-size: 2em;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-content {
+            padding: 50px;
+            animation: slideInLeft 0.6s ease;
+        }
+
+        .auth-panel {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3),
+                        0 0 60px rgba(102, 126, 234, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: floatIn 0.8s ease;
+        }
+
+        .auth-panel h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #999;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 700;
+            font-size: 1em;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 8px;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            width: 100% !important;
+            padding: 14px !important;
+            border: 2px solid #e0e0e0 !important;
+            border-radius: 12px !important;
+            font-size: 16px !important;
+            background: #f8f9fa !important;
+            cursor: pointer !important;
+            transition: all 0.3s !important;
+        }
+
+        input[type="date"]:focus,
+        input[type="time"]:focus {
+            outline: none !important;
+            border-color: #667eea !important;
+            background: white !important;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2) !important;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer !important;
+            filter: invert(0.8);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 0.85em;
+            width: auto;
+        }
+
+        .alert {
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: floatIn 0.5s ease;
+            border-left: 5px solid;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left-color: #28a745;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+            border-left-color: #ffc107;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            font-size: 1.8em;
+            animation: pulse 2s infinite;
+        }
+
+        .doctor-card {
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            position: relative;
+        }
+
+        .doctor-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .doctor-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .doctor-details h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .doctor-details p {
+            color: #666;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        .specialization {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            margin-top: 12px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .availability-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-size: 0.9em;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .time-slot:hover:not(.booked) {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .time-slot.booked {
+            background: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .time-slot.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .appointment-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .appointment-item {
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .appointment-item.upcoming {
+            border-left: 6px solid #28a745;
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.1);
+        }
+
+        .appointment-item.past {
+            border-left: 6px solid #999;
+            opacity: 0.7;
+        }
+
+        .appointment-item.cancelled {
+            border-left: 6px solid #dc3545;
+            opacity: 0.8;
+        }
+
+        .appointment-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        }
+
+        .appointment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-row strong {
+            color: #667eea;
+            display: block;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-row p {
+            color: #333;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            color: #856404;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: floatIn 0.4s ease;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 14px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #999;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            box-shadow: 0 3px 0 #667eea;
+            text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: slideInLeft 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .admin-table th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9em;
+        }
+
+        .admin-table td {
+            padding: 18px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .admin-table tbody tr {
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .admin-table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: #999;
+            font-size: 0.95em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.35);
+        }
+
+        .stat-box .number {
+            font-size: 3em;
+            font-weight: 800;
+            margin: 15px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-box .label {
+            font-size: 1em;
+            opacity: 0.95;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .panel-content {
+                padding: 25px;
+            }
+
+            .auth-panel {
+                padding: 30px 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .availability-slots {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .appointment-details {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                gap: 5px;
+            }
+
+            .nav-tab {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+        }
+
+        .security-info {
+            background: linear-gradient(135deg, #e7f3ff 0%, #e0f7ff 100%);
+            border-left: 5px solid #2196F3;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #0c5aa0;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .password-strength {
+            display: flex;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 5px;
+            flex: 1;
+            background: #e0e0e0;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .strength-bar.filled {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .strength-bar.medium {
+            background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+            box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3);
+        }
+
+        .strength-bar.weak {
+            background: linear-gradient(90deg, #dc3545 0%, #ff6b6b 100%);
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        h4 {
+            margin-top: 25px;
+            color: #333;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Graphics -->
+    <svg class="corner-decoration corner-top-left" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="80" fill="url(#grad1)" opacity="0.3"/>
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M100,20 L120,80 L180,100 L120,120 L100,180 L80,120 L20,100 L80,80 Z" fill="#667eea" opacity="0.2"/>
+    </svg>
+
+    <svg class="corner-decoration corner-bottom-right" viewBox="0 0 300 300">
+        <circle cx="150" cy="150" r="100" fill="none" stroke="#764ba2" stroke-width="2" opacity="0.2"/>
+        <circle cx="150" cy="150" r="80" fill="none" stroke="#667eea" stroke-width="2" opacity="0.2"/>
+        <circle cx="150" cy="150" r="60" fill="none" stroke="#f093fb" stroke-width="2" opacity="0.2"/>
+    </svg>
+    <!-- Auth Panel -->
+    <div id="authPanel" class="auth-panel">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <svg style="width: 70px; height: 70px; margin: 0 auto; display: block; animation: glow 2s ease-in-out infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#667eea">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+        </div>
+        <h2>🏥 HealthLink</h2>
+        
+        <div class="security-info">
+            ✓ Secure end-to-end encrypted authentication
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+        </div>
+
+        <div id="loginForm" class="auth-form active">
+            <div id="loginAlert" class="alert"></div>
+            
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="off" required style="position: relative; z-index: 10;">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="off" required style="position: relative; z-index: 10;">
+            </div>
+
+            <div class="form-group">
+                <label>Login As</label>
+                <select id="loginRole" required>
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="handleLogin()">Login Securely</button>
+        </div>
+
+        <div id="registerForm" class="auth-form">
+            <div id="registerAlert" class="alert"></div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="registerName" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="registerEmail" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="registerPassword" placeholder="Min 8 characters" required>
+                <div class="password-strength" id="passwordStrength"></div>
+                <small>Password must be at least 8 characters</small>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="registerConfirmPassword" placeholder="Confirm password" required>
+            </div>
+
+            <div class="form-group">
+                <label>Register As</label>
+                <select id="registerRole" required>
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                </select>
+            </div>
+
+            <div id="doctorFields" style="display: none;">
+                <div class="form-group">
+                    <label>Medical License Number</label>
+                    <input type="text" id="licenseNumber" placeholder="License #" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <select id="specialization" required>
+                        <option value="">Select Specialization</option>
+                        <option value="General Practice">🩺 General Practice</option>
+                        <option value="Cardiology">❤️ Cardiology</option>
+                        <option value="Neurology">🧠 Neurology</option>
+                        <option value="Dermatology">🩹 Dermatology</option>
+                        <option value="Orthopedics">🦴 Orthopedics</option>
+                        <option value="Pediatrics">👶 Pediatrics</option>
+                        <option value="Gynecology">👩‍⚕️ Gynecology & Obstetrics</option>
+                        <option value="Surgery">🔪 General Surgery</option>
+                        <option value="ENT">👂 ENT (Otolaryngology)</option>
+                        <option value="Ophthalmology">👁️ Ophthalmology</option>
+                        <option value="Gastroenterology">🍽️ Gastroenterology</option>
+                        <option value="Psychiatry">🧬 Psychiatry</option>
+                        <option value="Pulmonology">💨 Pulmonology</option>
+                        <option value="Urology">🚽 Urology</option>
+                        <option value="Emergency Medicine">🚑 Emergency Medicine</option>
+                        <option value="Anesthesiology">😴 Anesthesiology</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="doctorPhone" placeholder="+1-234-567-8900" required>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
+        </div>
+    </div>
+
+    <!-- Main Container for Dashboards -->
+    <div class="container">
+        <!-- Header -->
+        <div id="header" class="header">
+            <div class="logo-badge">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" stroke="none" fill="currentColor"/>
+                </svg>
+                <span style="color: #667eea; font-weight: 700;">MediBook Pro</span>
+            </div>
+            <h1>🏥 MediBook</h1>
+            <p>Secure Online Appointment Booking System</p>
+        </div>
+
+        <!-- Patient Dashboard -->
+        <div id="patientDashboard" class="main-panel">
+            <div class="panel-header">
+                <h2>👤 Patient Dashboard</h2>
+                <div>
+                    <span id="patientName" style="margin-right: 20px;"></span>
+                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('appointments')">My Appointments</button>
+                    <button class="nav-tab" onclick="switchTab('bookAppointment')">Book Appointment</button>
+                    <button class="nav-tab" onclick="switchTab('doctorDirectory')">Doctor Directory</button>
+                    <button class="nav-tab" onclick="switchTab('profile')">Profile</button>
+                </div>
+
+                <!-- My Appointments Tab -->
+                <div id="appointments" class="tab-content active">
+                    <div style="text-align: center; margin: 30px 0; opacity: 0.7;">
+                        <svg style="width: 200px; height: 200px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                            <rect x="30" y="40" width="140" height="120" rx="10" stroke="#667eea" stroke-width="3" fill="none"/>
+                            <path d="M 60 60 L 140 60" stroke="#667eea" stroke-width="2"/>
+                            <circle cx="80" cy="90" r="8" fill="#667eea"/>
+                            <circle cx="80" cy="120" r="8" fill="#667eea"/>
+                            <path d="M 100 90 L 140 90" stroke="#764ba2" stroke-width="2"/>
+                            <path d="M 100 120 L 140 120" stroke="#764ba2" stroke-width="2"/>
+                            <path d="M 50 75 L 50 65 L 60 65 L 60 75" stroke="#f093fb" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <h3>📅 My Appointments</h3>
+                    <div id="appointmentList" class="appointment-list"></div>
+                </div>
+
+                <!-- Book Appointment Tab -->
+                <div id="bookAppointment" class="tab-content">
+                    <div style="text-align: center; margin: 30px 0; opacity: 0.7;">
+                        <svg style="width: 200px; height: 200px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="80" r="30" stroke="#667eea" stroke-width="3" fill="none"/>
+                            <path d="M 75 115 Q 75 130 100 130 Q 125 130 125 115" stroke="#667eea" stroke-width="3" fill="none"/>
+                            <circle cx="100" cy="150" r="3" fill="#f093fb"/>
+                            <circle cx="85" cy="155" r="3" fill="#764ba2"/>
+                            <circle cx="115" cy="155" r="3" fill="#764ba2"/>
+                            <path d="M 70 50 L 85 50 L 85 65 L 70 65 Z" stroke="#764ba2" stroke-width="2" fill="none"/>
+                            <path d="M 130 60 L 150 60 L 150 75" stroke="#f093fb" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <h3>📋 Book an Appointment</h3>
+                    <div class="form-group">
+                        <label>Select Doctor</label>
+                        <select id="doctorSelect" onchange="loadDoctorSlots()">
+                            <option value="">Choose a doctor...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Date</label>
+                        <input type="date" id="appointmentDate" onchange="loadAvailableSlots()">
+                    </div>
+                    <div id="slotsContainer"></div>
+                    <button class="btn btn-primary" onclick="confirmBooking()" style="margin-top: 20px;">Confirm Booking</button>
+                </div>
+
+                <!-- Doctor Directory Tab -->
+                <div id="doctorDirectory" class="tab-content">
+                    <div style="text-align: center; margin: 30px 0; opacity: 0.7;">
+                        <svg style="width: 200px; height: 200px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                            <circle cx="60" cy="80" r="25" stroke="#667eea" stroke-width="2.5" fill="none"/>
+                            <path d="M 40 110 Q 40 125 60 125 Q 80 125 80 110" stroke="#667eea" stroke-width="2.5" fill="none"/>
+                            <path d="M 65 60 L 65 45 L 70 45 L 70 55 L 75 55" stroke="#764ba2" stroke-width="2" fill="none"/>
+                            <circle cx="140" cy="75" r="25" stroke="#f093fb" stroke-width="2.5" fill="none"/>
+                            <path d="M 120 105 Q 120 120 140 120 Q 160 120 160 105" stroke="#f093fb" stroke-width="2.5" fill="none"/>
+                            <path d="M 85 145 L 155 145 L 155 170 L 85 170 Z" stroke="#667eea" stroke-width="2" fill="none" opacity="0.5"/>
+                            <circle cx="100" cy="160" r="3" fill="#28a745"/>
+                            <circle cx="140" cy="160" r="3" fill="#28a745"/>
+                        </svg>
+                    </div>
+                    <h3>👨‍⚕️ Doctor Directory</h3>
+                    <div id="doctorList"></div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile" class="tab-content">
+                    <h3>👤 My Profile</h3>
+                    <div class="card">
+                        <div class="detail-row">
+                            <strong>Name</strong>
+                            <p id="profileName"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Email</strong>
+                            <p id="profileEmail"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Account Created</strong>
+                            <p id="profileCreated"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Total Appointments</strong>
+                            <p id="profileAppointments">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Dashboard -->
+        <div id="doctorDashboard" class="main-panel">
+            <div class="panel-header">
+                <h2>👨‍⚕️ Doctor Dashboard</h2>
+                <div>
+                    <span id="doctorName" style="margin-right: 20px;"></span>
+                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('doctorAppointments')">My Appointments</button>
+                    <button class="nav-tab" onclick="switchTab('availability')">Manage Availability</button>
+                    <button class="nav-tab" onclick="switchTab('doctorProfile')">Profile</button>
+                </div>
+
+                <!-- Doctor Appointments Tab -->
+                <div id="doctorAppointments" class="tab-content active">
+                    <div style="text-align: center; margin: 30px 0; opacity: 0.7;">
+                        <svg style="width: 200px; height: 200px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                            <rect x="40" y="30" width="120" height="140" rx="10" stroke="#667eea" stroke-width="2.5" fill="none"/>
+                            <path d="M 60 50 L 140 50" stroke="#764ba2" stroke-width="2"/>
+                            <path d="M 50 70 L 150 70" stroke="#667eea" stroke-width="1.5" opacity="0.5"/>
+                            <path d="M 50 90 L 150 90" stroke="#667eea" stroke-width="1.5" opacity="0.5"/>
+                            <path d="M 50 110 L 150 110" stroke="#667eea" stroke-width="1.5" opacity="0.5"/>
+                            <circle cx="65" cy="75" r="4" fill="#28a745"/>
+                            <circle cx="65" cy="95" r="4" fill="#28a745"/>
+                            <circle cx="65" cy="115" r="4" fill="#ffc107"/>
+                        </svg>
+                    </div>
+                    <h3>📅 Scheduled Appointments</h3>
+                    <div id="doctorAppointmentList" class="appointment-list"></div>
+                </div>
+
+                <!-- Manage Availability Tab -->
+                <div id="availability" class="tab-content">
+                    <div style="text-align: center; margin: 30px 0; opacity: 0.7;">
+                        <svg style="width: 200px; height: 200px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="70" stroke="#667eea" stroke-width="2.5" fill="none"/>
+                            <path d="M 100 50 L 100 100" stroke="#764ba2" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 100 100 L 135 100" stroke="#f093fb" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="8" fill="#667eea"/>
+                            <g opacity="0.3">
+                                <circle cx="100" cy="50" r="5" fill="#667eea"/>
+                                <circle cx="135" cy="100" r="5" fill="#667eea"/>
+                            </g>
+                            <path d="M 60 140 L 140 140 L 135 155 L 65 155 Z" stroke="#f093fb" stroke-width="2" fill="none" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <h3>⏰ Manage Availability</h3>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>📅 Select Date (DD-MM-YYYY)</label>
+                            <input type="text" id="availabilityDate" placeholder="25-01-2026" required style="font-size: 16px; padding: 14px;" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>🕘 Start Time (HH:MM)</label>
+                            <input type="text" id="startTime" placeholder="09:00" value="09:00" maxlength="5" required style="font-size: 16px; padding: 14px;" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>🕐 End Time (HH:MM)</label>
+                            <input type="text" id="endTime" placeholder="17:00" value="17:00" maxlength="5" required style="font-size: 16px; padding: 14px;" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>⏱️ Slot Duration (minutes)</label>
+                            <input type="number" id="slotDuration" value="30" min="15" placeholder="30" required style="font-size: 16px; padding: 14px;">
+                        </div>
+                        <button class="btn btn-primary" onclick="addAvailability()" style="margin-top: 20px;">✅ ADD AVAILABILITY</button>
+                    </div>
+                    <h4 style="margin-top: 30px;">📋 Current Availability</h4>
+                    <div id="availabilityList"></div>
+                </div>
+
+                <!-- Doctor Profile Tab -->
+                <div id="doctorProfile" class="tab-content">
+                    <h3>👤 My Profile</h3>
+                    <div class="card">
+                        <div class="detail-row">
+                            <strong>Name</strong>
+                            <p id="docProfileName"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Email</strong>
+                            <p id="docProfileEmail"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Specialization</strong>
+                            <p id="docProfileSpec"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>License Number</strong>
+                            <p id="docProfileLicense"></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Phone</strong>
+                            <p id="docProfilePhone"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="main-panel">
+            <div class="panel-header">
+                <h2>⚙️ Admin Dashboard</h2>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+            <div class="panel-content">
+                <div style="text-align: center; margin: 20px 0; opacity: 0.6;">
+                    <svg style="width: 150px; height: 150px; margin: 0 auto; display: block; animation: float 5s ease-in-out infinite;" viewBox="0 0 200 200" fill="none">
+                        <rect x="30" y="50" width="35" height="80" fill="#667eea" opacity="0.7"/>
+                        <rect x="75" y="40" width="35" height="90" fill="#764ba2" opacity="0.7"/>
+                        <rect x="120" y="60" width="35" height="70" fill="#f093fb" opacity="0.7"/>
+                        <path d="M 25 140 L 170 140" stroke="#667eea" stroke-width="2"/>
+                        <circle cx="47.5" cy="145" r="3" fill="#667eea"/>
+                        <circle cx="92.5" cy="145" r="3" fill="#667eea"/>
+                        <circle cx="137.5" cy="145" r="3" fill="#667eea"/>
+                    </svg>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="label">Total Users</div>
+                        <div class="number" id="totalUsers">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Total Appointments</div>
+                        <div class="number" id="totalAppointments">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Confirmed</div>
+                        <div class="number" id="confirmedAppointments">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Doctors</div>
+                        <div class="number" id="totalDoctors">0</div>
+                    </div>
+                </div>
+
+                <div class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('allAppointments')">All Appointments</button>
+                    <button class="nav-tab" onclick="switchTab('userManagement')">Users</button>
+                    <button class="nav-tab" onclick="switchTab('auditLog')">Audit Log</button>
+                    <button class="nav-tab" onclick="switchTab('systemSettings')">System</button>
+                </div>
+
+                <!-- All Appointments Tab -->
+                <div id="allAppointments" class="tab-content active">
+                    <h3>📅 All Appointments</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- User Management Tab -->
+                <div id="userManagement" class="tab-content">
+                    <h3>👥 User Management</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Audit Log Tab -->
+                <div id="auditLog" class="tab-content">
+                    <h3>📋 System Audit Log</h3>
+                    <div id="auditLogList"></div>
+                </div>
+
+                <!-- System Settings Tab -->
+                <div id="systemSettings" class="tab-content">
+                    <h3>⚙️ System Settings</h3>
+                    <div class="card" style="border: 2px solid #dc3545;">
+                        <h4 style="color: #dc3545; margin-top: 0;">🗑️ Danger Zone</h4>
+                        <p style="color: #666; margin-bottom: 20px;">⚠️ This will clear all test users and reset the system to factory defaults. Sample doctors and appointments will be preserved.</p>
+                        <button class="btn btn-secondary" onclick="if(confirm('Are you sure? This will remove all test users and reset the system.')) { clearAllData(); }" style="background: #dc3545; color: white;">
+                            🔄 Reset & Remove All Test Users
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Appointment</h3>
+                <button class="close-btn" onclick="closeModal('confirmModal')">✕</button>
+            </div>
+            <div id="confirmDetails"></div>
+            <div class="action-buttons" style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="finalizeBooking()">Confirm</button>
+                <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================ DATA MANAGEMENT ================
+        const appData = {
+            users: [],
+            appointments: [],
+            availability: [],
+            auditLog: [],
+            currentUser: null,
+            selectedDoctor: null,
+            selectedDate: null,
+            selectedTime: null
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('mediBookData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                // Always reinitialize to ensure fresh availability
+                initializeSampleData();
+                return;
+            } else {
+                initializeSampleData();
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('mediBookData', JSON.stringify(appData));
+        }
+
+        // Clear all data and reset
+        function clearAllData() {
+            localStorage.removeItem('mediBookData');
+            appData.users = [];
+            appData.appointments = [];
+            appData.availability = [];
+            appData.auditLog = [];
+            appData.currentUser = null;
+            initializeSampleData();
+            location.reload();
+        }
+
+        // Initialize sample data
+        function initializeSampleData() {
+            appData.users = [
+                {
+                    id: 1,
+                    name: 'Dr. Priya Sharma',
+                    email: 'priya@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Cardiology',
+                    license: 'LIC-2024-001',
+                    phone: '+91-98765-43210',
+                    createdAt: new Date('2024-01-15').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 2,
+                    name: 'Dr. Rajesh Kumar',
+                    email: 'rajesh@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Orthopedics',
+                    license: 'LIC-2024-002',
+                    phone: '+91-98765-43211',
+                    createdAt: new Date('2024-01-20').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 4,
+                    name: 'Dr. Anjali Patel',
+                    email: 'anjali@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Dermatology',
+                    license: 'LIC-2024-003',
+                    phone: '+91-98765-43212',
+                    createdAt: new Date('2024-02-01').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 5,
+                    name: 'Dr. Vikram Singh',
+                    email: 'vikram@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Neurology',
+                    license: 'LIC-2024-004',
+                    phone: '+91-98765-43213',
+                    createdAt: new Date('2024-02-05').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 6,
+                    name: 'Dr. Meera Gupta',
+                    email: 'meera@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Pediatrics',
+                    license: 'LIC-2024-005',
+                    phone: '+91-98765-43214',
+                    createdAt: new Date('2024-02-10').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 7,
+                    name: 'Dr. James Mitchell',
+                    email: 'james@medibook.com',
+                    role: 'doctor',
+                    specialization: 'General Practice',
+                    license: 'LIC-2024-006',
+                    phone: '+1-555-987-6543',
+                    createdAt: new Date('2024-02-15').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 8,
+                    name: 'Dr. Sophie Laurent',
+                    email: 'sophie@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Ophthalmology',
+                    license: 'LIC-2024-007',
+                    phone: '+33-1-2345-6789',
+                    createdAt: new Date('2024-02-20').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 9,
+                    name: 'Dr. Arjun Reddy',
+                    email: 'arjun@medibook.com',
+                    role: 'doctor',
+                    specialization: 'Gastroenterology',
+                    license: 'LIC-2024-008',
+                    phone: '+91-98765-43215',
+                    createdAt: new Date('2024-03-01').toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 3,
+                    name: 'Admin User',
+                    email: 'admin@medibook.com',
+                    role: 'admin',
+                    createdAt: new Date('2024-01-01').toISOString(),
+                    status: 'active'
+                }
+            ];
+
+            // Create availability for next 14 days for all doctors
+            appData.availability = [];
+            let availId = 1;
+            const doctorIds = [1, 2, 4, 5, 6, 7, 8, 9];
+            const doctorHours = {
+                1: { start: '09:00', end: '17:00' },  // Sarah
+                2: { start: '10:00', end: '18:00' },  // Michael
+                4: { start: '08:00', end: '16:00' },  // Emily
+                5: { start: '09:00', end: '17:00' },  // James
+                6: { start: '10:00', end: '16:00' },  // Lisa
+                7: { start: '08:00', end: '18:00' },  // Robert
+                8: { start: '09:00', end: '17:00' },  // Jessica
+                9: { start: '10:00', end: '18:00' }   // David
+            };
+
+            for (let i = 0; i <= 3650; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // Create availability for all doctors for all days (next 10 years)
+                doctorIds.forEach(doctorId => {
+                    const hours = doctorHours[doctorId];
+                    appData.availability.push({
+                        id: availId++,
+                        doctorId: doctorId,
+                        date: dateStr,
+                        startTime: hours.start,
+                        endTime: hours.end,
+                        slotDuration: 30
+                    });
+                });
+            }
+
+            appData.auditLog = [
+                {
+                    id: 1,
+                    action: 'System initialized with 8 doctors',
+                    user: 'system',
+                    timestamp: new Date().toISOString()
+                }
+            ];
+
+            // Add version to track data format updates
+            appData.version = 2;
+
+            saveData();
+        }
+
+        // ================ AUTHENTICATION ================
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-form').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab + 'Form').classList.add('active');
+            event.target.classList.add('active');
+
+            // Show doctor fields if registering as doctor
+            if (tab === 'register') {
+                const roleSelect = document.getElementById('registerRole');
+                document.getElementById('doctorFields').style.display = 
+                    roleSelect.value === 'doctor' ? 'block' : 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            refreshAvailabilityIfNeeded();
+            initDatePicker();
+
+            document.getElementById('registerRole').addEventListener('change', function() {
+                document.getElementById('doctorFields').style.display = 
+                    this.value === 'doctor' ? 'block' : 'none';
+            });
+
+            document.getElementById('registerPassword').addEventListener('input', function() {
+                updatePasswordStrength(this.value);
+            });
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').setAttribute('min', today);
+        });
+
+        // Refresh availability data if it's outdated
+        function refreshAvailabilityIfNeeded() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Check if we have any availability in the future
+            const hasFutureAvailability = appData.availability.some(a => {
+                const availDate = new Date(a.date);
+                return availDate >= today;
+            });
+
+            if (!hasFutureAvailability) {
+                // Generate fresh availability for next 14 days for ALL doctors
+                appData.availability = [];
+                let availId = 1;
+                const doctorIds = [1, 2, 4, 5, 6, 7, 8, 9];
+                const doctorHours = {
+                    1: { start: '09:00', end: '17:00' },
+                    2: { start: '10:00', end: '18:00' },
+                    4: { start: '08:00', end: '16:00' },
+                    5: { start: '09:00', end: '17:00' },
+                    6: { start: '10:00', end: '16:00' },
+                    7: { start: '08:00', end: '18:00' },
+                    8: { start: '09:00', end: '17:00' },
+                    9: { start: '10:00', end: '18:00' }
+                };
+
+                for (let i = 0; i <= 3650; i++) {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    // Create availability for ALL doctors
+                    doctorIds.forEach(doctorId => {
+                        const hours = doctorHours[doctorId];
+                        appData.availability.push({
+                            id: availId++,
+                            doctorId: doctorId,
+                            date: dateStr,
+                            startTime: hours.start,
+                            endTime: hours.end,
+                            slotDuration: 30
+                        });
+                    });
+                }
+                saveData();
+            }
+        }
+
+        function updatePasswordStrength(password) {
+            const strength = document.getElementById('passwordStrength');
+            strength.innerHTML = '';
+            
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+
+            for (let i = 0; i < 4; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'strength-bar';
+                if (i < score) {
+                    if (score <= 2) bar.classList.add('weak');
+                    else if (score === 3) bar.classList.add('medium');
+                    else bar.classList.add('filled');
+                }
+                strength.appendChild(bar);
+            }
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('loginRole').value;
+
+            if (!email || !password) {
+                showAlert('loginAlert', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            let user = appData.users.find(u => u.email === email && u.role === role);
+            
+            if (!user) {
+                // Create new user if doesn't exist (demo mode)
+                user = {
+                    id: appData.users.length + 1,
+                    name: email.split('@')[0],
+                    email: email,
+                    role: role,
+                    createdAt: new Date().toISOString(),
+                    status: 'active'
+                };
+                appData.users.push(user);
+                saveData();
+            }
+
+            appData.currentUser = user;
+            logAuditEvent(`User ${user.name} logged in as ${role}`);
+            saveData();
+
+            document.getElementById('authPanel').style.display = 'none';
+            document.getElementById('header').classList.add('show');
+
+            showDashboard(role);
+            populateDashboard();
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const role = document.getElementById('registerRole').value;
+
+            if (!name || !email || !password || !confirmPassword || !role) {
+                showAlert('registerAlert', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('registerAlert', 'Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlert('registerAlert', 'Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                showAlert('registerAlert', 'Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (appData.users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+                showAlert('registerAlert', 'Email already registered', 'error');
+                return;
+            }
+
+            let newUser = {
+                id: appData.users.length + 1,
+                name: name,
+                email: email,
+                role: role,
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            };
+
+            if (role === 'doctor') {
+                const license = document.getElementById('licenseNumber').value.trim();
+                const specializationSelect = document.getElementById('specialization');
+                const phone = document.getElementById('doctorPhone').value.trim();
+
+                if (!license || !specializationSelect.value || !phone) {
+                    showAlert('registerAlert', 'Please fill in all doctor fields', 'error');
+                    return;
+                }
+
+                // Extract specialization text (remove emoji)
+                const specializationText = specializationSelect.options[specializationSelect.selectedIndex].text;
+                const specialization = specializationText.replace(/^[^\w]*/, '').trim();
+
+                newUser.specialization = specialization || specializationSelect.value;
+                newUser.license = license;
+                newUser.phone = phone;
+            }
+
+            appData.users.push(newUser);
+            appData.currentUser = newUser;
+            logAuditEvent(`New ${role} registered: ${name}`);
+            saveData();
+
+            showAlert('registerAlert', 'Account created successfully! Logging in...', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('authPanel').style.display = 'none';
+                document.getElementById('header').classList.add('show');
+                showDashboard(role);
+                populateDashboard();
+            }, 1500);
+        }
+
+        function handleLogout() {
+            logAuditEvent(`User ${appData.currentUser.name} logged out`);
+            appData.currentUser = null;
+            appData.selectedDoctor = null;
+            appData.selectedDate = null;
+            appData.selectedTime = null;
+            saveData();
+
+            document.querySelectorAll('.main-panel').forEach(el => el.classList.remove('active'));
+            document.getElementById('header').classList.remove('show');
+            document.getElementById('authPanel').style.display = 'block';
+
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function showDashboard(role) {
+            const dashboardMap = {
+                'patient': 'patientDashboard',
+                'doctor': 'doctorDashboard',
+                'admin': 'adminDashboard'
+            };
+            
+            const dashboard = dashboardMap[role];
+            if (dashboard) {
+                document.getElementById(dashboard).classList.add('active');
+                if (role === 'patient') {
+                    document.getElementById('patientName').textContent = appData.currentUser.name;
+                } else if (role === 'doctor') {
+                    document.getElementById('doctorName').textContent = appData.currentUser.name;
+                }
+            }
+        }
+
+        // ================ NAVIGATION ================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'doctorDirectory') {
+                populateDoctorDirectory();
+            } else if (tabName === 'bookAppointment') {
+                populateDoctorSelect();
+            } else if (tabName === 'appointments') {
+                displayPatientAppointments();
+            } else if (tabName === 'doctorAppointments') {
+                displayDoctorAppointments();
+            } else if (tabName === 'availability') {
+                displayAvailability();
+            } else if (tabName === 'allAppointments') {
+                displayAllAppointments();
+            } else if (tabName === 'userManagement') {
+                displayUserManagement();
+            } else if (tabName === 'auditLog') {
+                displayAuditLog();
+            } else if (tabName === 'profile') {
+                displayPatientProfile();
+            } else if (tabName === 'doctorProfile') {
+                displayDoctorProfile();
+            }
+        }
+
+        // ================ PATIENT FUNCTIONS ================
+        function populateDoctorDirectory() {
+            const doctors = appData.users.filter(u => u.role === 'doctor');
+            const list = document.getElementById('doctorList');
+            list.innerHTML = '';
+
+            const specializations = {
+                'Cardiology': '❤️',
+                'Dermatology': '🩹',
+                'Orthopedics': '🦴',
+                'Neurology': '🧠',
+                'Pediatrics': '👶',
+                'General Practice': '🩺',
+                'Ophthalmology': '👁️',
+                'Gastroenterology': '🍽️'
+            };
+
+            doctors.forEach(doctor => {
+                const emoji = specializations[doctor.specialization] || '👨‍⚕️';
+                const card = document.createElement('div');
+                card.className = 'doctor-card';
+                card.innerHTML = `
+                    <div class="doctor-info">
+                        <div class="doctor-details">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
+                                <div class="doctor-avatar" style="font-size: 2em;">${emoji}</div>
+                                <div>
+                                    <h4 style="margin: 0;">${doctor.name}</h4>
+                                    <p style="margin: 3px 0; color: #999;">License: ${doctor.license}</p>
+                                </div>
+                            </div>
+                            <p>📞 ${doctor.phone}</p>
+                            <p>📧 ${doctor.email}</p>
+                            <span class="specialization">${doctor.specialization}</span>
+                            <span class="status-indicator active" style="margin-left: 10px;"></span>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-small" onclick="bookWithDoctor(${doctor.id})">
+                                🗓️ Book Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function populateDoctorSelect() {
+            const doctors = appData.users.filter(u => u.role === 'doctor');
+            const select = document.getElementById('doctorSelect');
+            
+            if (select.children.length === 1) {
+                doctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = `${doctor.name} - ${doctor.specialization}`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function bookWithDoctor(doctorId) {
+            appData.selectedDoctor = appData.users.find(u => u.id === doctorId);
+            switchTab('bookAppointment');
+            document.getElementById('doctorSelect').value = doctorId;
+        }
+
+        function loadDoctorSlots() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            appData.selectedDoctor = appData.users.find(u => u.id == doctorId);
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('slotsContainer').innerHTML = '';
+        }
+
+        function loadAvailableSlots() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            const selectedDate = document.getElementById('appointmentDate').value;
+
+            if (!doctorId || !selectedDate) {
+                return;
+            }
+
+            appData.selectedDate = selectedDate;
+            
+            // Debug: Log what we're looking for
+            console.log('Looking for availability:', {doctorId: parseInt(doctorId), date: selectedDate});
+            console.log('Available slots:', appData.availability.map(a => ({doctorId: a.doctorId, date: a.date})));
+
+            // Find availability for this doctor and date
+            const availability = appData.availability.find(
+                a => parseInt(a.doctorId) === parseInt(doctorId) && a.date === selectedDate
+            );
+
+            const container = document.getElementById('slotsContainer');
+            container.innerHTML = '';
+
+            if (!availability) {
+                container.innerHTML = '<p class="text-muted">⚠️ No available slots for this date. Try selecting another date (we have availability for the next 14 days).</p>';
+                return;
+            }
+
+            // Generate time slots
+            const slots = generateTimeSlots(availability);
+            
+            if (slots.length === 0) {
+                container.innerHTML = '<p class="text-muted">⚠️ No time slots available for this date.</p>';
+                return;
+            }
+
+            container.innerHTML = '<label style="display: block; margin-bottom: 10px;">✅ Available Times</label>';
+
+            const slotsDiv = document.createElement('div');
+            slotsDiv.className = 'availability-slots';
+
+            slots.forEach(slot => {
+                const isBooked = appData.appointments.some(
+                    a => parseInt(a.doctorId) === parseInt(doctorId) && 
+                    a.date === selectedDate && 
+                    a.time === slot &&
+                    a.status !== 'cancelled'
+                );
+
+                const button = document.createElement('div');
+                button.className = 'time-slot' + (isBooked ? ' booked' : '');
+                button.textContent = slot;
+
+                if (!isBooked) {
+                    button.onclick = () => selectTimeSlot(slot, button);
+                }
+
+                slotsDiv.appendChild(button);
+            });
+
+            container.appendChild(slotsDiv);
+        }
+
+        function generateTimeSlots(availability) {
+            const slots = [];
+            const [startHour, startMin] = availability.startTime.split(':').map(Number);
+            const [endHour, endMin] = availability.endTime.split(':').map(Number);
+            const duration = availability.slotDuration;
+
+            let current = new Date();
+            current.setHours(startHour, startMin, 0);
+
+            let end = new Date();
+            end.setHours(endHour, endMin, 0);
+
+            while (current < end) {
+                const hours = String(current.getHours()).padStart(2, '0');
+                const minutes = String(current.getMinutes()).padStart(2, '0');
+                slots.push(`${hours}:${minutes}`);
+                current.setMinutes(current.getMinutes() + duration);
+            }
+
+            return slots;
+        }
+
+        function selectTimeSlot(time, element) {
+            document.querySelectorAll('.time-slot').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            appData.selectedTime = time;
+        }
+
+        function confirmBooking() {
+            if (!appData.selectedDoctor || !appData.selectedDate || !appData.selectedTime) {
+                alert('Please select a doctor, date, and time');
+                return;
+            }
+
+            const doctor = appData.selectedDoctor;
+            const date = appData.selectedDate;
+            const time = appData.selectedTime;
+            const patient = appData.currentUser;
+
+            const details = `
+                <div class="detail-row">
+                    <strong>👨‍⚕️ Doctor</strong>
+                    <p>${doctor.name} (${doctor.specialization})</p>
+                </div>
+                <div class="detail-row">
+                    <strong>📅 Date</strong>
+                    <p>${new Date(date).toLocaleDateString()}</p>
+                </div>
+                <div class="detail-row">
+                    <strong>⏰ Time</strong>
+                    <p>${time}</p>
+                </div>
+                <div class="detail-row">
+                    <strong>👤 Patient</strong>
+                    <p>${patient.name}</p>
+                </div>
+                <div class="security-info">
+                    ✓ This appointment will be securely encrypted and stored.
+                </div>
+            `;
+
+            document.getElementById('confirmDetails').innerHTML = details;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function finalizeBooking() {
+            const appointment = {
+                id: appData.appointments.length + 1,
+                patientId: appData.currentUser.id,
+                doctorId: appData.selectedDoctor.id,
+                date: appData.selectedDate,
+                time: appData.selectedTime,
+                status: 'confirmed',
+                createdAt: new Date().toISOString(),
+                notes: ''
+            };
+
+            appData.appointments.push(appointment);
+            logAuditEvent(`Appointment created: ${appData.currentUser.name} with Dr. ${appData.selectedDoctor.name}`);
+            saveData();
+
+            closeModal('confirmModal');
+            showAlert('bookAppointment', 'Appointment booked successfully!', 'success');
+
+            appData.selectedDoctor = null;
+            appData.selectedDate = null;
+            appData.selectedTime = null;
+
+            document.getElementById('doctorSelect').value = '';
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('slotsContainer').innerHTML = '';
+
+            setTimeout(() => displayPatientAppointments(), 1500);
+        }
+
+        function displayPatientAppointments() {
+            const appointments = appData.appointments.filter(a => a.patientId === appData.currentUser.id);
+            const list = document.getElementById('appointmentList');
+            list.innerHTML = '';
+
+            if (appointments.length === 0) {
+                list.innerHTML = '<p class="text-muted text-center" style="padding: 30px;">📭 No appointments yet. Start booking now!</p>';
+                return;
+            }
+
+            appointments.forEach(apt => {
+                const doctor = appData.users.find(u => u.id === apt.doctorId);
+                const aptDate = new Date(apt.date);
+                const isPast = new Date(`${apt.date}T${apt.time}`) < new Date();
+                const statusClass = apt.status === 'cancelled' ? 'cancelled' : (isPast ? 'past' : 'upcoming');
+
+                const item = document.createElement('div');
+                item.className = `appointment-item ${statusClass}`;
+                item.innerHTML = `
+                    <div class="appointment-details">
+                        <div class="detail-row">
+                            <strong>👨‍⚕️ Doctor</strong>
+                            <p>${doctor.name} <span class="checkmark">✓</span></p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>🏥 Specialization</strong>
+                            <p>${doctor.specialization}</p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>📅 Date & Time</strong>
+                            <p>${aptDate.toLocaleDateString()} at ${apt.time}</p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Status</strong>
+                            <p>
+                                <span class="status-indicator ${apt.status === 'cancelled' ? 'pending' : (isPast ? '' : 'active')}"></span>
+                                <span class="status-badge status-${apt.status}">${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        ${apt.status !== 'cancelled' && !isPast ? `
+                            <button class="btn btn-secondary btn-small" onclick="cancelAppointment(${apt.id})">❌ Cancel</button>
+                        ` : ''}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function cancelAppointment(appointmentId) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                const apt = appData.appointments.find(a => a.id === appointmentId);
+                apt.status = 'cancelled';
+                logAuditEvent(`Appointment ${appointmentId} cancelled by patient`);
+                saveData();
+                displayPatientAppointments();
+            }
+        }
+
+        function displayPatientProfile() {
+            const user = appData.currentUser;
+            const appointmentCount = appData.appointments.filter(a => a.patientId === user.id).length;
+
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profileCreated').textContent = new Date(user.createdAt).toLocaleDateString();
+            document.getElementById('profileAppointments').textContent = appointmentCount;
+        }
+
+        // ================ DOCTOR FUNCTIONS ================
+        function displayDoctorAppointments() {
+            const appointments = appData.appointments.filter(a => a.doctorId === appData.currentUser.id);
+            const list = document.getElementById('doctorAppointmentList');
+            list.innerHTML = '';
+
+            if (appointments.length === 0) {
+                list.innerHTML = '<p class="text-muted text-center" style="padding: 30px;">No appointments scheduled</p>';
+                return;
+            }
+
+            appointments.forEach(apt => {
+                const patient = appData.users.find(u => u.id === apt.patientId);
+                const aptDate = new Date(apt.date);
+                const isPast = new Date(`${apt.date}T${apt.time}`) < new Date();
+                const statusClass = apt.status === 'cancelled' ? 'cancelled' : (isPast ? 'past' : 'upcoming');
+
+                const item = document.createElement('div');
+                item.className = `appointment-item ${statusClass}`;
+                item.innerHTML = `
+                    <div class="appointment-details">
+                        <div class="detail-row">
+                            <strong>Patient</strong>
+                            <p>${patient.name}</p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Email</strong>
+                            <p>${patient.email}</p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Date & Time</strong>
+                            <p>${aptDate.toLocaleDateString()} at ${apt.time}</p>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Status</strong>
+                            <p><span class="status-badge status-${apt.status}">${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}</span></p>
+                        </div>
+                    </div>
+                    ${apt.status === 'confirmed' && !isPast ? `
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-small" onclick="doctorCancelAppointment(${apt.id})">Cancel</button>
+                        </div>
+                    ` : ''}
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function doctorCancelAppointment(appointmentId) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                const apt = appData.appointments.find(a => a.id === appointmentId);
+                apt.status = 'cancelled';
+                logAuditEvent(`Appointment ${appointmentId} cancelled by doctor`);
+                saveData();
+                displayDoctorAppointments();
+            }
+        }
+
+        function initDatePicker() {
+            // Native HTML5 date and time inputs are now used
+            const dateInput = document.getElementById('availabilityDate');
+            if (dateInput) {
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.setAttribute('min', today);
+                dateInput.addEventListener('click', function() {
+                    this.focus();
+                    this.click();
+                });
+            }
+            
+            // Make time inputs clickable
+            const startTimeInput = document.getElementById('startTime');
+            const endTimeInput = document.getElementById('endTime');
+            
+            if (startTimeInput) {
+                startTimeInput.addEventListener('click', function() {
+                    this.focus();
+                });
+            }
+            
+            if (endTimeInput) {
+                endTimeInput.addEventListener('click', function() {
+                    this.focus();
+                });
+            }
+        }
+
+        function addAvailability() {
+            const dateInput = document.getElementById('availabilityDate').value;
+            const startTimeInput = document.getElementById('startTime').value;
+            const endTimeInput = document.getElementById('endTime').value;
+            const slotDurationInput = document.getElementById('slotDuration').value;
+
+            console.log('Form Data:', { dateInput, startTimeInput, endTimeInput, slotDurationInput });
+
+            if (!dateInput) {
+                alert('❌ Please select a date');
+                return;
+            }
+            if (!dateInput || !/^\d{2}-\d{2}-\d{4}$/.test(dateInput)) {
+                alert('❌ Please enter date in format: DD-MM-YYYY (e.g., 25-01-2026)');
+                document.getElementById('availabilityDate').focus();
+                return;
+            }
+
+            // Convert DD-MM-YYYY to YYYY-MM-DD format for storage
+            const [day, month, year] = dateInput.split('-');
+            const formattedDate = `${year}-${month}-${day}`;
+
+            if (!startTimeInput || !/^\d{2}:\d{2}$/.test(startTimeInput)) {
+                alert('❌ Please enter start time in format: HH:MM (e.g., 09:00)');
+                document.getElementById('startTime').focus();
+                return;
+            }
+
+            if (!endTimeInput || !/^\d{2}:\d{2}$/.test(endTimeInput)) {
+                alert('❌ Please enter end time in format: HH:MM (e.g., 17:00)');
+                document.getElementById('endTime').focus();
+                return;
+            }
+
+            // Validate that end time is after start time
+            if (endTimeInput <= startTimeInput) {
+                alert('❌ End time must be after start time');
+                return;
+            }
+
+            const availability = {
+                id: appData.availability.length + 1,
+                doctorId: appData.currentUser.id,
+                date: formattedDate,
+                startTime: startTimeInput,
+                endTime: endTimeInput,
+                slotDuration: parseInt(slotDurationInput)
+            };
+
+            appData.availability.push(availability);
+            logAuditEvent(`Doctor ${appData.currentUser.name} added availability for ${formattedDate} from ${startTimeInput} to ${endTimeInput}`);
+            saveData();
+
+            // Clear the form
+            document.getElementById('availabilityDate').value = '';
+            document.getElementById('startTime').value = '09:00';
+            document.getElementById('endTime').value = '17:00';
+            document.getElementById('slotDuration').value = '30';
+
+            alert('✅ Availability added successfully!');
+            displayAvailability();
+        }
+
+        function displayAvailability() {
+            const availability = appData.availability.filter(a => a.doctorId === appData.currentUser.id);
+            const list = document.getElementById('availabilityList');
+            list.innerHTML = '';
+
+            if (availability.length === 0) {
+                list.innerHTML = '<p class="text-muted">No availability set yet</p>';
+                return;
+            }
+
+            availability.forEach(av => {
+                const date = new Date(av.date);
+                const item = document.createElement('div');
+                item.className = 'card';
+                item.innerHTML = `
+                    <div class="detail-row">
+                        <strong>Date</strong>
+                        <p>${date.toLocaleDateString()}</p>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Time</strong>
+                        <p>${av.startTime} - ${av.endTime}</p>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Slot Duration</strong>
+                        <p>${av.slotDuration} minutes</p>
+                    </div>
+                    <button class="btn btn-secondary btn-small" onclick="removeAvailability(${av.id})" style="margin-top: 10px;">Remove</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function removeAvailability(availabilityId) {
+            const index = appData.availability.findIndex(a => a.id === availabilityId);
+            if (index > -1) {
+                appData.availability.splice(index, 1);
+                logAuditEvent(`Doctor ${appData.currentUser.name} removed availability`);
+                saveData();
+                displayAvailability();
+            }
+        }
+
+        function displayDoctorProfile() {
+            const user = appData.currentUser;
+            document.getElementById('docProfileName').textContent = user.name;
+            document.getElementById('docProfileEmail').textContent = user.email;
+            document.getElementById('docProfileSpec').textContent = user.specialization || '-';
+            document.getElementById('docProfileLicense').textContent = user.license || '-';
+            document.getElementById('docProfilePhone').textContent = user.phone || '-';
+        }
+
+        // ================ ADMIN FUNCTIONS ================
+        function populateDashboard() {
+            if (appData.currentUser.role !== 'admin') return;
+
+            document.getElementById('totalUsers').textContent = appData.users.length;
+            document.getElementById('totalAppointments').textContent = appData.appointments.length;
+            document.getElementById('confirmedAppointments').textContent = 
+                appData.appointments.filter(a => a.status === 'confirmed').length;
+            document.getElementById('totalDoctors').textContent = 
+                appData.users.filter(u => u.role === 'doctor').length;
+        }
+
+        function displayAllAppointments() {
+            const tbody = document.getElementById('appointmentsTableBody');
+            tbody.innerHTML = '';
+
+            appData.appointments.forEach(apt => {
+                const patient = appData.users.find(u => u.id === apt.patientId);
+                const doctor = appData.users.find(u => u.id === apt.doctorId);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${patient ? patient.name : '-'}</td>
+                    <td>${doctor ? doctor.name : '-'}</td>
+                    <td>${new Date(apt.date).toLocaleDateString()} at ${apt.time}</td>
+                    <td><span class="status-badge status-${apt.status}">${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}</span></td>
+                    <td>
+                        ${apt.status !== 'cancelled' ? `
+                            <button class="btn btn-secondary btn-small" onclick="adminCancelAppointment(${apt.id})">Cancel</button>
+                        ` : '-'}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function adminCancelAppointment(appointmentId) {
+            if (confirm('Are you sure?')) {
+                const apt = appData.appointments.find(a => a.id === appointmentId);
+                apt.status = 'cancelled';
+                logAuditEvent(`Admin cancelled appointment ${appointmentId}`);
+                saveData();
+                displayAllAppointments();
+            }
+        }
+
+        function displayUserManagement() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            appData.users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
+                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td><span class="status-badge status-confirmed">${user.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-small" onclick="toggleUserStatus(${user.id})">
+                            ${user.status === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function toggleUserStatus(userId) {
+            const user = appData.users.find(u => u.id === userId);
+            user.status = user.status === 'active' ? 'inactive' : 'active';
+            logAuditEvent(`Admin changed user ${user.name} status to ${user.status}`);
+            saveData();
+            displayUserManagement();
+        }
+
+        function displayAuditLog() {
+            const list = document.getElementById('auditLogList');
+            list.innerHTML = '';
+
+            appData.auditLog.slice().reverse().forEach(log => {
+                const item = document.createElement('div');
+                item.className = 'card';
+                item.innerHTML = `
+                    <div class="detail-row">
+                        <strong>Action</strong>
+                        <p>${log.action}</p>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Timestamp</strong>
+                        <p>${new Date(log.timestamp).toLocaleString()}</p>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // ================ UTILITIES ================
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert show alert-${type}`;
+
+            if (type === 'success') {
+                setTimeout(() => alert.classList.remove('show'), 3000);
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function logAuditEvent(action) {
+            appData.auditLog.push({
+                id: appData.auditLog.length + 1,
+                action: action,
+                user: appData.currentUser ? appData.currentUser.name : 'system',
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal('confirmModal');
+            }
+        };
+    </script>
+</body>
+</html>
